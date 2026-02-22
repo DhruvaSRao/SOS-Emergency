@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audio Upload Test</title>
+</head>
+<body>
+  <h2>Record & Upload Audio</h2>
+
+  <button onclick="startRecording()">Start Recording</button>
+  <button onclick="stopRecording()">Stop Recording</button>
+
+  <script>
+    let mediaRecorder;
+    let audioChunks = [];
+    let dispatchId = "SOS-ac24d831-12ab-4fa3-a7ce-87b857e5d858";
+    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTlmMmMyNzQ1OTIwY2UzZTQ2ODhlMCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzcxNjk2ODM0LCJleHAiOjE3NzIzMDE2MzR9.hThDQXqHzvbe5sZ4csefchYSCFGkYxmXpy3m9VBjFm8";
+
+    async function startRecording() {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = uploadAudio;
+
+      mediaRecorder.start();
+      console.log("Recording started");
+    }
+
+    function stopRecording() {
+      mediaRecorder.stop();
+      console.log("Recording stopped");
+    }
+
+    async function uploadAudio() {
+      const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "recording.webm");
+
+      const response = await fetch(
+        `http://localhost:4000/api/sos/${dispatchId}/upload-audio`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token
+          },
+          body: formData
+        }
+      );
+
+      const result = await response.json();
+      console.log("Upload result:", result);
+    }
+  </script>
+</body>
+</html>
