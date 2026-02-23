@@ -19,6 +19,10 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
+app.use(cors({
+  origin: "https://your-frontend-url.vercel.app"
+}));
+
 // Health check route
 app.get("/", (req, res) => {
   res.send("Backend running");
