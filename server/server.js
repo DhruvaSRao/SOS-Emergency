@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(cors({
-  origin: "https://your-frontend-url.vercel.app"
+  origin: "sos-emergency-one.vercel.app"
 }));
 
 // Health check route
