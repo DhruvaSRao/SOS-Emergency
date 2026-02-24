@@ -33,8 +33,12 @@ API.interceptors.response.use(
 );
 
 // Auth
-export const registerUser = (data: { name: string; email: string; password: string }) =>
-  API.post("/auth/register", data);
+export const registerUser = (data: {
+  name: string;
+  email: string;
+  password: string;
+  emergencyContact?: { name: string; phone: string };
+}) => API.post("/auth/register", data);
 
 export const loginPolice = async (credentials: { email: string; password: string }) => {
   const res = await API.post("/auth/login", credentials);

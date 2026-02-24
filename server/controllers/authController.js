@@ -13,7 +13,7 @@ const generateToken = (id, role) => {
 // Register
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, emergencyContact } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -27,7 +27,8 @@ exports.register = async (req, res) => {
       name,
       email,
       password,
-      role
+      role,
+      emergencyContact: emergencyContact || {name: null, phone: null},
     });
 
     res.status(201).json({

@@ -9,7 +9,14 @@ import { useToast } from "../hooks/use-toast";
 const UserSignup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirm: "",
+    emergencyName: "",
+    emergencyPhone: "",
+  });
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +32,15 @@ const UserSignup = () => {
     }
     setLoading(true);
     try {
-      await registerUser({ name: form.name, email: form.email, password: form.password });
+      await registerUser({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        emergencyContact: {
+          name: form.emergencyName,
+          phone: form.emergencyPhone,
+        },
+      });
       toast({ title: "Account created! Please login." });
       navigate("/login");
     } catch (err: any) {
@@ -87,6 +102,30 @@ const UserSignup = () => {
             required
             className="h-11 bg-secondary border-border"
           />
+
+          {/* Emergency Contact */}
+          <div className="pt-2">
+            <p className="text-xs text-muted-foreground mb-2 font-mono tracking-wide">
+              EMERGENCY CONTACT (optional)
+            </p>
+            <div className="space-y-2">
+              <Input
+                placeholder="Contact Name (e.g. Mom)"
+                value={form.emergencyName}
+                onChange={(e) => setForm({ ...form, emergencyName: e.target.value })}
+                className="h-11 bg-secondary border-border"
+              />
+              <Input
+                placeholder="Phone Number (e.g. +919876543210)"
+                value={form.emergencyPhone}
+                onChange={(e) => setForm({ ...form, emergencyPhone: e.target.value })}
+                className="h-11 bg-secondary border-border"
+              />
+            </div>
+            <p className="text-[10px] text-muted-foreground/50 mt-1">
+              They will receive an SMS with your location when SOS is triggered
+            </p>
+          </div>
 
           <Button
             type="submit"

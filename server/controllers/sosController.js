@@ -1,6 +1,7 @@
 const SOS = require("../models/SOS");
 const { v4: uuidv4 } = require("uuid");
 const cloudinary = require("../config/cloudinary");
+const { sendEmergencyNotifications } = require("../services/twilioService");
 const User = require("../models/User");
 
 // Create SOS
@@ -71,6 +72,17 @@ exports.createSOS = async (req, res) => {
       }
 
       io.to(`user-${req.user.id}`).emit("mySOSUpdate", newSOS);
+
+      // Send SMS to emergency contact
+      const user = await User.findById(req.user._id);
+      if (user?.emergencyContact?.phone) {
+        await sendEmergencyNotifications({
+          to: user.emergencyContact.phone,
+          userName: user.name,
+          lat: latitude,
+          lng: longitude,
+        });
+      }
 
     } catch (notifyErr) {
       console.error("Notification error (SOS already saved):", notifyErr.message);
