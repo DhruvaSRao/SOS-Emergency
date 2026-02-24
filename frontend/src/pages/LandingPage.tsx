@@ -1,29 +1,37 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, AlertTriangle, Radio, ArrowRight, Lock } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { DotLottie } from "@lottiefiles/dotlottie-web";
+
+type DotLottieWC = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+  src: string;
+  autoplay?: boolean;
+  loop?: boolean;
+};
+
+const DotLottie = (props: DotLottieWC) =>
+  React.createElement('dotlottie-wc', props);
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (canvasRef.current) {
-      new DotLottie({
-        autoplay: true,
-        loop: true, // Keeps the woman's legs moving
-        canvas: canvasRef.current,
-        src: "https://lottie.host/857f2cff-29d8-41a4-ba69-26a90dacf0ec/o5L1Uoklue.lottie", 
-      });
-    }
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js";
+    script.type = "module";
+    document.head.appendChild(script);
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
   }, []);
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
       
-      {/* --- CUSTOM ANIMATION STYLES --- */}
-      {/* This makes the canvas slide from left to right infinitely */}
+      {/* --- CSS ANIMATION --- */}
       <style>{`
         @keyframes runAcrossScreen {
           0% { transform: translateX(-50%); } 
@@ -34,18 +42,16 @@ const LandingPage = () => {
         }
       `}</style>
 
-      {/* --- BACKGROUND ANIMATION LAYER --- */}
-      {/* 1. absolute inset-0: Covers the screen area
-         2. opacity-10: Very faint so text is readable
-         3. pointer-events-none: Clicks pass through to buttons
-         4. animate-run-across: Moves the entire canvas left to right
-      */}
+      {/* --- BACKGROUND LAYER --- */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <canvas
-          ref={canvasRef}
-          id="canvas"
-          className="w-full h-full opacity-10 animate-run-across object-contain"
-        />
+        <div className="w-full h-full opacity-10 animate-run-across">
+          <DotLottie
+            src="https://lottie.host/8b66ff60-7483-4f4e-ba17-765114357a05/FOvRpqdkXQ.lottie"
+            autoplay
+            loop
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
       </div>
 
       {/* --- CONTENT LAYER --- */}
